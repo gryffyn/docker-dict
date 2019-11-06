@@ -1,0 +1,37 @@
+#!/bin/sh
+set -e
+
+package=$1
+tarball=$1.tar.gz
+dir=/usr/src/$package
+
+usage() {
+	echo "usage: $0 COMMAND"
+	echo
+	echo "Manage source tarball lifecycle."
+	echo
+	echo "Commands:"
+	echo "   extract  extract package source tarball if not already done."
+	echo "   delete   delete extracted package source and tarball if not already done."
+	echo
+}
+
+case "$2" in
+	extract)
+		mkdir -p "$dir"
+		if [ ! -f "$dir/.docker-extracted" ]; then
+			tar xfz /usr/src/$tarball -C "$dir" --strip-components=1
+			touch "$dir/.docker-extracted"
+		fi
+		;;
+
+	delete)
+        rm /usr/src/$tarball
+		rm -rf "$dir"
+		;;
+
+	*)
+		usage
+		exit 1
+		;;
+esac
