@@ -83,12 +83,6 @@ RUN set -eux; \
     unset DICTD_URL; \
     docker-source-manager dictd extract; \
     cd dictd; \
-    sed -i '4s/.*/DICTD=\/usr\/sbin\/dictd/g' INITSCRIPT; \
-    sed -i '6s/.*/DICTD_OPTIONS="-dnodetach -dnofork"/g' INITSCRIPT; \
-    sed -i '9s/.*/DICTD_PID_FILE=\/var\/run\/dictd.pid/g' INITSCRIPT; \
-    sed -i 's/dictd.init/\/etc\/dictd/g' INITSCRIPT; \
-    cp INITSCRIPT /etc/init.d/dictd; \
-    chmod +x /etc/init.d/dictd; \
     autoconf; \
     autoheader; \
     ./configure --prefix=/usr --sysconfdir=/etc; \
@@ -109,3 +103,7 @@ RUN set -eux; \
     cp web1913* wn* gazetteer* jargon* foldoc* elements* easton* hitchcock* /usr/lib/dict; \
     docker-source-manager dicts delete; \
     apk del --no-network .build-deps
+
+EXPOSE 2628 
+
+CMD ["dictd", "-dnodetach"]
