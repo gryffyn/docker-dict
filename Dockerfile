@@ -4,17 +4,18 @@ LABEL maintainer="Andrea Maccis <andrea.maccis@gmail.com>"
 
 COPY docker-source-manager /usr/local/bin
 
+ENV DICTD_VERSION 1.12.1
+
 ENV BMKDEP_VERSION 20140112
 ENV BMAKE_VERSION 20181221
 ENV MKCONFIGURE_VERSION 0.32.0
 ENV LIBMAA_VERSION 1.4.4
-ENV DICTD_VERSION 1.12.1
 ENV DICTS_VERSION 2011.03.16
 
 RUN set -eux; \
     apk add --no-cache --virtual .build-deps \
-	        curl \
-	        tar \
+            curl \
+            tar \
             autoconf \
             gcc \
             g++ \
@@ -82,6 +83,12 @@ RUN set -eux; \
     unset DICTD_URL; \
     docker-source-manager dictd extract; \
     cd dictd; \
+    sed -i '4s/.*/DICTD=\/usr\/sbin\/dictd/g' INITSCRIPT; \
+    sed -i '6s/.*/DICTD_OPTIONS="-dnodetach -dnofork"/g' INITSCRIPT; \
+    sed -i '9s/.*/DICTD_PID_FILE=\/var\/run\/dictd.pid/g' INITSCRIPT; \
+    sed -i 's/dictd.init/\/etc\/dictd/g' INITSCRIPT; \
+    cp INITSCRIPT /etc/init.d/dictd; \
+    chmod +x /etc/init.d/dictd; \
     autoconf; \
     autoheader; \
     ./configure --prefix=/usr --sysconfdir=/etc; \
@@ -91,7 +98,7 @@ RUN set -eux; \
     make install.dictd; \
     cp examples/dictd1.conf /etc/dictd.conf; \
     docker-source-manager dictd delete; \
-    # dict-dicts
+    # dictd-dicts
     cd /usr/src; \
     export DICTS_URL="https://github.com/ferdnyc/dictd-dicts/archive/snap.${DICTS_VERSION}.tar.gz"; \
     curl -fsSL -o dicts.tar.gz "$DICTS_URL"; \
