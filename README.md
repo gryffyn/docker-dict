@@ -4,7 +4,13 @@ As per [RFC 2229](https://www.ietf.org/rfc/rfc2229.txt), the Dictionary Server P
 
 # How to use this image
 
-## docker-compose
+## Providing other dictionaries
+
+```bash
+$ docker run --name dictd -v /path/config/file.conf:/etc/dictd.conf -v /path/dictionaries/directory:/usr/lib/dict -d amaccis/dict
+```
+
+## Using docker-compose
 
 Here is an example using docker-compose.yml:
 
@@ -21,6 +27,6 @@ services:
 
 Once the dictd container is up&running, you can use the client to perform queries:
 
-```
-docker-compose run --rm dict -h <dictd_container_ip> hacker
+```bash
+$ docker-compose run --rm dict -h <dictd_container_ip> hacker
 ```
