@@ -1,15 +1,15 @@
-FROM alpine:3.10
+FROM alpine:3.12
 
 LABEL maintainer="Andrea Maccis <andrea.maccis@gmail.com>"
 
 COPY docker-source-manager /usr/local/bin
 
-ENV DICTD_VERSION 1.12.1
+ENV DICTD_VERSION 1.13.0
 
 ENV BMKDEP_VERSION 20140112
-ENV BMAKE_VERSION 20181221
-ENV MKCONFIGURE_VERSION 0.32.0
-ENV LIBMAA_VERSION 1.4.4
+ENV BMAKE_VERSION 20200524
+ENV MKCONFIGURE_VERSION 0.34.2
+ENV LIBMAA_VERSION 1.4.7
 ENV DICTS_VERSION 2011.03.16
 
 RUN set -eux; \
@@ -66,7 +66,6 @@ RUN set -eux; \
     unset LIBMAA_URL; \
     docker-source-manager libmaa extract; \
     cd libmaa; \
-    touch sys.mk; \
     export PREFIX=/usr; \
     mkcmake all; \
     mkcmake install; \
@@ -74,11 +73,10 @@ RUN set -eux; \
     docker-source-manager libmaa delete; \
     cd /usr/src/mk-configure; \
     bmake uninstall; \
-    rm ../_mkc*; \
     docker-source-manager mk-configure delete; \
     # dictd
     cd /usr/src; \
-    export DICTD_URL="https://github.com/cheusov/dictd/archive/master.tar.gz"; \
+    export DICTD_URL="https://github.com/cheusov/dictd/archive/${DICTD_VERSION}.tar.gz"; \
     curl -fsSL -o dictd.tar.gz "$DICTD_URL"; \
     unset DICTD_URL; \
     docker-source-manager dictd extract; \
