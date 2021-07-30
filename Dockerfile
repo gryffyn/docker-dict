@@ -92,16 +92,16 @@ RUN set -eux; \
     docker-source-manager dictd delete; \
     # dictd-dicts
     cd /usr/src; \
-    export DICTS_URL="https://github.com/ferdnyc/dictd-dicts/archive/snap.${DICTS_VERSION}.tar.gz"; \
+    export DICTS_URL="https://github.com/gryffyn/dictd-dicts/archive/refs/tags/rel0.1.tar.gz"; \
     curl -fsSL -o dicts.tar.gz "$DICTS_URL"; \
     unset DICTS_URL; \
     docker-source-manager dicts extract; \
     cd dicts; \
     mkdir -p /usr/lib/dict; \
-    cp web1913* wn* gazetteer* jargon* foldoc* elements* easton* hitchcock* /usr/lib/dict; \
+    cp *.dict.dz *.index /usr/lib/dict; \
     docker-source-manager dicts delete; \
     apk del --no-network .build-deps
 
-EXPOSE 2628 
+EXPOSE $PORT
 
 CMD ["dictd", "-dnodetach"]
