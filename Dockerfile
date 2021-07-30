@@ -1,6 +1,6 @@
 FROM alpine:3.12
 
-LABEL maintainer="Andrea Maccis <andrea.maccis@gmail.com>"
+LABEL maintainer="gryffyn <me@neveris.one>"
 
 COPY docker-source-manager /usr/local/bin
 
@@ -88,20 +88,21 @@ RUN set -eux; \
     make dictd; \
     make install.dict; \
     make install.dictd; \
-    cp examples/dictd1.conf /etc/dictd.conf; \
+    # cp examples/dictd1.conf /etc/dictd.conf; \
     docker-source-manager dictd delete; \
     # dictd-dicts
     cd /usr/src; \
-    export DICTS_URL="https://github.com/gryffyn/dictd-dicts/archive/refs/tags/rel0.1.tar.gz"; \
+    export DICTS_URL="https://github.com/gryffyn/dictd-dicts/archive/refs/tags/rel0.2.tar.gz"; \
     curl -fsSL -o dicts.tar.gz "$DICTS_URL"; \
     unset DICTS_URL; \
     docker-source-manager dicts extract; \
     cd dicts; \
-    mkdir -p /usr/lib/dict; \
-    cp *.dict.dz *.index /usr/lib/dict; \
+    mkdir -p /usr/lib/dictd; \
+    cp *.dict.dz *.index /usr/lib/dictd; \
+    cp dictd.conf /etc/dictd.conf; \
     docker-source-manager dicts delete; \
     apk del --no-network .build-deps
 
-EXPOSE $PORT
+EXPOSE 2628
 
 CMD ["dictd", "-dnodetach"]
